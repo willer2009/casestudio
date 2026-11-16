@@ -1,0 +1,1449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Case Studio — Agentic Business-Case Qualification &amp; Gate-1 Portfolio Triage</title>
+  <meta name="description" content="ETH Zürich Agentic Systems Lab (Fall 2026) Project Abstract & Architecture Blueprint in collaboration with LastingImpact.AI GmbH." />
+  <style>
+    :root {
+      --bg-canvas: #f8fafc;
+      --bg-surface: #ffffff;
+      --bg-subtle: #f1f5f9;
+      --text-primary: #0f172a;
+      --text-secondary: #334155;
+      --text-muted: #64748b;
+      --border-light: #e2e8f0;
+      --border-medium: #cbd5e1;
+      --accent-primary: #1d4ed8;
+      --accent-primary-soft: #eff6ff;
+      --accent-primary-border: #bfdbfe;
+      --accent-dark: #0f172a;
+      --emerald-text: #065f46;
+      --emerald-bg: #ecfdf5;
+      --emerald-border: #a7f3d0;
+      --amber-text: #92400e;
+      --amber-bg: #fffbeb;
+      --amber-border: #fde68a;
+      --violet-text: #5b21b6;
+      --violet-bg: #f5f3ff;
+      --violet-border: #ddd6fe;
+      --rose-text: #9f1239;
+      --rose-bg: #fff1f2;
+      --rose-border: #fecdd3;
+      --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
+      --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.06);
+      --radius-md: 10px;
+      --radius-lg: 14px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Helvetica, Arial, sans-serif;
+      color: var(--text-primary);
+      background-color: var(--bg-canvas);
+      line-height: 1.6;
+    }
+
+    body {
+      background-color: var(--bg-canvas);
+      color: var(--text-primary);
+    }
+
+    /* Top Header Bar */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .topbar-inner {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: var(--text-primary);
+      text-decoration: none;
+    }
+
+    .brand-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 7px;
+      background: linear-gradient(135deg, #1d4ed8, #0f172a);
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .topbar-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.25rem 0.65rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      background: var(--bg-subtle);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-light);
+    }
+
+    .pill-blue {
+      background: var(--accent-primary-soft);
+      color: var(--accent-primary);
+      border-color: var(--accent-primary-border);
+    }
+
+    .btn-print {
+      background: var(--text-primary);
+      color: #fff;
+      border: none;
+      padding: 0.4rem 0.85rem;
+      border-radius: 7px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.15s ease;
+    }
+
+    .btn-print:hover {
+      opacity: 0.88;
+    }
+
+    /* Hero Banner */
+    .hero {
+      background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+      border-bottom: 1px solid var(--border-light);
+      padding: 3rem 1.5rem 2.5rem;
+    }
+
+    .hero-inner {
+      max-width: 1240px;
+      margin: 0 auto;
+    }
+
+    .hero-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .hero h1 {
+      font-size: clamp(2rem, 3.6vw, 2.85rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      color: var(--text-primary);
+      margin-bottom: 0.75rem;
+    }
+
+    .hero-subtitle {
+      font-size: 1.15rem;
+      color: var(--text-secondary);
+      max-width: 820px;
+      margin-bottom: 1.75rem;
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 0.85rem;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: 1rem 1.25rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .meta-item span {
+      display: block;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-bottom: 0.15rem;
+    }
+
+    .meta-item strong {
+      font-size: 0.92rem;
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    /* Layout Container */
+    .layout {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 4rem;
+      display: grid;
+      grid-template-columns: 240px minmax(0, 1fr);
+      gap: 2.25rem;
+      align-items: start;
+    }
+
+    /* Sticky Sidebar TOC */
+    .sidebar {
+      position: sticky;
+      top: 4.5rem;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: 1.1rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .sidebar-title {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      font-weight: 700;
+      margin-bottom: 0.65rem;
+      padding-left: 0.5rem;
+    }
+
+    .toc-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .toc-list a {
+      display: block;
+      padding: 0.42rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: all 0.15s ease;
+    }
+
+    .toc-list a:hover {
+      background: var(--bg-subtle);
+      color: var(--text-primary);
+    }
+
+    .toc-list a.active {
+      background: var(--accent-primary-soft);
+      color: var(--accent-primary);
+      font-weight: 600;
+    }
+
+    /* Main Content Sections */
+    .content {
+      display: flex;
+      flex-direction: column;
+      gap: 2.25rem;
+    }
+
+    .section-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      gap: 0.75rem;
+      margin-bottom: 1.1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .section-num {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--accent-primary);
+      background: var(--accent-primary-soft);
+      border: 1px solid var(--accent-primary-border);
+      padding: 0.15rem 0.55rem;
+      border-radius: 6px;
+    }
+
+    .section-header h2 {
+      font-size: 1.38rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+    }
+
+    p {
+      color: var(--text-secondary);
+      margin-bottom: 1rem;
+      font-size: 0.96rem;
+    }
+
+    p:last-child {
+      margin-bottom: 0;
+    }
+
+    h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin: 1.4rem 0 0.6rem;
+    }
+
+    /* Callout Box */
+    .callout {
+      background: var(--accent-primary-soft);
+      border-left: 4px solid var(--accent-primary);
+      border-radius: 0 8px 8px 0;
+      padding: 1rem 1.2rem;
+      margin: 1.1rem 0;
+      font-size: 0.93rem;
+      color: var(--text-primary);
+    }
+
+    .callout strong {
+      color: var(--accent-primary);
+    }
+
+    /* Two-Workspace Grid */
+    .workspace-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem;
+      margin-top: 1.1rem;
+    }
+
+    .workspace-box {
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      background: var(--bg-canvas);
+    }
+
+    .workspace-box h4 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.35rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .role-tag {
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 0.15rem 0.5rem;
+      border-radius: 999px;
+      background: #e2e8f0;
+      color: #334155;
+    }
+
+    .workspace-box ul {
+      margin: 0.65rem 0 0 1.15rem;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    .workspace-box li {
+      margin-bottom: 0.4rem;
+    }
+
+    /* Big Stat Cards */
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 0.9rem;
+      margin: 1.1rem 0 1.5rem;
+    }
+
+    .stat-card {
+      background: var(--bg-canvas);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: 1.1rem;
+    }
+
+    .stat-value {
+      font-size: 1.55rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--text-primary);
+      line-height: 1.2;
+      margin-bottom: 0.3rem;
+    }
+
+    .stat-value.rose { color: #be123c; }
+    .stat-value.blue { color: #1d4ed8; }
+    .stat-value.emerald { color: #047857; }
+    .stat-value.amber { color: #b45309; }
+
+    .stat-label {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    /* Failure Modes List */
+    .failure-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap: 1rem;
+      margin-top: 0.75rem;
+    }
+
+    .failure-card {
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: 1.15rem;
+      background: #fff;
+    }
+
+    .failure-card-title {
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--text-primary);
+      margin-bottom: 0.4rem;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .failure-card p {
+      font-size: 0.88rem;
+      margin-bottom: 0;
+    }
+
+    /* Architecture SVG Diagram Container */
+    .diagram-wrap {
+      background: var(--bg-canvas);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      margin: 1rem 0 1.4rem;
+      overflow-x: auto;
+    }
+
+    /* Interactive Tabs */
+    .tabs {
+      display: flex;
+      gap: 0.5rem;
+      border-bottom: 1px solid var(--border-light);
+      margin-bottom: 1.25rem;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      padding: 0.6rem 0.95rem;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .tab-btn:hover {
+      color: var(--text-primary);
+    }
+
+    .tab-btn.active {
+      color: var(--accent-primary);
+      border-bottom-color: var(--accent-primary);
+    }
+
+    .tab-panel {
+      display: none;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    /* Provenance Badges */
+    .badge {
+      display: inline-block;
+      padding: 0.14rem 0.5rem;
+      border-radius: 5px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+    }
+
+    .badge-fact {
+      background: var(--emerald-bg);
+      color: var(--emerald-text);
+      border: 1px solid var(--emerald-border);
+    }
+
+    .badge-estimate {
+      background: var(--amber-bg);
+      color: var(--amber-text);
+      border: 1px solid var(--amber-border);
+    }
+
+    .badge-inferred {
+      background: var(--violet-bg);
+      color: var(--violet-text);
+      border: 1px solid var(--violet-border);
+    }
+
+    .badge-missing {
+      background: var(--rose-bg);
+      color: var(--rose-text);
+      border: 1px solid var(--rose-border);
+    }
+
+    /* Code Block */
+    .code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #1e293b;
+      color: #e2e8f0;
+      padding: 0.55rem 1rem;
+      border-radius: 8px 8px 0 0;
+      font-size: 0.78rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    .btn-copy {
+      background: #334155;
+      color: #f8fafc;
+      border: 1px solid #475569;
+      border-radius: 5px;
+      padding: 0.2rem 0.6rem;
+      font-size: 0.74rem;
+      cursor: pointer;
+    }
+
+    .btn-copy:hover {
+      background: #475569;
+    }
+
+    pre {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem 1.1rem;
+      border-radius: 0 0 8px 8px;
+      overflow-x: auto;
+      font-size: 0.8rem;
+      line-height: 1.5;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    /* Tables */
+    .table-wrap {
+      overflow-x: auto;
+      margin: 0.9rem 0 1.2rem;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+      text-align: left;
+    }
+
+    th {
+      background: var(--bg-subtle);
+      color: var(--text-primary);
+      font-weight: 700;
+      padding: 0.7rem 0.9rem;
+      border-bottom: 1px solid var(--border-medium);
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 0.7rem 0.9rem;
+      border-bottom: 1px solid var(--border-light);
+      color: var(--text-secondary);
+      vertical-align: top;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* Interactive Scale Simulator */
+    .simulator-box {
+      background: var(--bg-canvas);
+      border: 1px solid var(--border-medium);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      margin: 1rem 0 1.35rem;
+    }
+
+    .sim-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .sim-slider-group {
+      flex: 1 1 280px;
+    }
+
+    .sim-slider-group label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.86rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.35rem;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent-primary);
+      cursor: pointer;
+    }
+
+    .sim-presets {
+      display: flex;
+      gap: 0.45rem;
+      flex-wrap: wrap;
+    }
+
+    .preset-btn {
+      background: #fff;
+      border: 1px solid var(--border-medium);
+      border-radius: 6px;
+      padding: 0.32rem 0.65rem;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+
+    .preset-btn:hover, .preset-btn.active {
+      background: var(--accent-primary);
+      color: #fff;
+      border-color: var(--accent-primary);
+    }
+
+    /* Roadmap Timeline */
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      margin-top: 0.85rem;
+    }
+
+    .timeline-item {
+      display: grid;
+      grid-template-columns: 130px 1fr;
+      gap: 1rem;
+      padding: 0.9rem 1.1rem;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      background: var(--bg-canvas);
+    }
+
+    .timeline-date {
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: var(--accent-primary);
+    }
+
+    .timeline-date span {
+      display: block;
+      font-size: 0.74rem;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    .timeline-body strong {
+      display: block;
+      font-size: 0.94rem;
+      color: var(--text-primary);
+      margin-bottom: 0.2rem;
+    }
+
+    .timeline-body p {
+      font-size: 0.86rem;
+      margin: 0;
+    }
+
+    /* Footer */
+    footer {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 1.5rem 1.5rem 3rem;
+      border-top: 1px solid var(--border-light);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    @media (max-width: 880px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+      .sidebar {
+        position: static;
+      }
+      .timeline-item {
+        grid-template-columns: 1fr;
+        gap: 0.35rem;
+      }
+    }
+
+    @media print {
+      .topbar, .sidebar, .btn-print, .btn-copy, .sim-presets {
+        display: none !important;
+      }
+      .layout {
+        display: block;
+        padding: 0;
+      }
+      .section-card {
+        box-shadow: none;
+        border: 1px solid #cbd5e1;
+        break-inside: avoid;
+        margin-bottom: 1.25rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a href="#" class="brand">
+        <span class="brand-icon">CS</span>
+        <span>Case Studio</span>
+      </a>
+      <div class="topbar-meta">
+        <span class="pill pill-blue">ETH Zürich · Agentic Systems Lab (Fall 2026)</span>
+        <span class="pill">Partner: LastingImpact.AI GmbH</span>
+        <button class="btn-print" onclick="window.print()">Print / Save PDF</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-badges">
+        <span class="pill pill-blue">Project Abstract &amp; Architecture Blueprint</span>
+        <span class="pill">AI Use Case Qualification Configuration</span>
+        <span class="pill">v1.2 · November 2026</span>
+      </div>
+      <h1>Case Studio</h1>
+      <p class="hero-subtitle">
+        An agentic business-case qualification, semantic deduplication, and Gate-1 portfolio triage system—transforming uneven departmental pitches into CFO-ready, comparable investment dossiers.
+      </p>
+      <div class="meta-grid">
+        <div class="meta-item">
+          <span>Course</span>
+          <strong>Building Agentic AI Systems for Industry Transformation</strong>
+        </div>
+        <div class="meta-item">
+          <span>Industry Sponsor</span>
+          <strong>Jérôme Zürcher · LastingImpact.AI GmbH</strong>
+        </div>
+        <div class="meta-item">
+          <span>Core Modules</span>
+          <strong>Case Submitter &amp; Case Manager</strong>
+        </div>
+        <div class="meta-item">
+          <span>Target Deliverable</span>
+          <strong>December 16, 2026 · Working PoC + Video</strong>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content Layout -->
+  <div class="layout">
+    <!-- Sticky Sidebar TOC -->
+    <aside class="sidebar">
+      <div class="sidebar-title">Contents</div>
+      <ul class="toc-list" id="toc">
+        <li><a href="#executive-summary" class="active">1. Executive Summary</a></li>
+        <li><a href="#industry-problem">2. Problem &amp; Bottleneck</a></li>
+        <li><a href="#architecture">3. System Architecture</a></li>
+        <li><a href="#kpis-business-case">4. KPIs &amp; Business Case</a></li>
+        <li><a href="#roadmap">5. 4-Week Roadmap</a></li>
+      </ul>
+    </aside>
+
+    <!-- Main Document Column -->
+    <main class="content">
+
+      <!-- SECTION 1 -->
+      <section class="section-card" id="executive-summary">
+        <div class="section-header">
+          <span class="section-num">01</span>
+          <h2>Executive Summary &amp; Strategic Positioning</h2>
+        </div>
+        <p>
+          Inside large enterprises, AI initiatives do not compete in isolation—they compete directly against capital equipment, commercial campaigns, and operational investments for the same discretionary growth budget. Yet bottom-up proposals arrive at central evaluation boards with uneven rigor, unsubstantiated efficiency claims, missing run-rate costs, and hidden cross-department duplication.
+        </p>
+        <p>
+          <strong>Case Studio</strong> is an agentic intake, enrichment, and portfolio-triage platform designed to bridge the gap between decentralized business teams and central investment governance committees. Rather than acting as a passive intake form, Case Studio embeds an interactive AI qualification coach at the front door of the investment funnel.
+        </p>
+        <div class="callout">
+          <strong>Architectural Decoupling:</strong> Case Studio separates its <em>domain-agnostic qualification engine</em> (static-RAG corporate grounding, schema-driven gap detection, semantic deduplication, cost-of-delay ranking, and strict fact-vs.-assumption provenance) from <em>pluggable domain rubrics</em>—configured via the sponsor’s Gate-1 Excel template and dynamically activating AI-specific data, architecture, and compliance probes when a proposal involves machine learning or agentic systems.
+        </div>
+
+        <div class="workspace-grid">
+          <div class="workspace-box">
+            <h4>Case Submitter <span class="role-tag">Business Team &amp; Sponsor</span></h4>
+            <p style="font-size:0.86rem; margin-bottom:0.4rem;">Replaces static questionnaires with guided, context-aware business-case co-creation.</p>
+            <ul>
+              <li>Silently grounds rough pitches against company strategy, org units, and profit pools via static RAG.</li>
+              <li>Asks 2–3 high-leverage follow-up questions per turn to enforce SMART KPIs and full lifecycle costs.</li>
+              <li>Separates <strong>Hard Savings</strong> from <strong>Soft Reinvested Capacity</strong> and captures <strong>Cost of Delay</strong> sensitivity.</li>
+              <li>Displays live provenance badges (<em>Fact</em>, <em>Estimate</em>, <em>Inferred</em>, <em>Missing</em>).</li>
+            </ul>
+          </div>
+          <div class="workspace-box">
+            <h4>Case Manager <span class="role-tag">Central Portfolio / AI Team</span></h4>
+            <p style="font-size:0.86rem; margin-bottom:0.4rem;">Eliminates manual backlog triage, duplicate PoC funding, and FIFO queue bottlenecks.</p>
+            <ul>
+              <li>Distinguishes <strong>True Duplicates</strong> from <strong>Shared Capabilities / Overlapping Benefits</strong> across silos.</li>
+              <li>Prioritizes Gate-1 review queues using <strong>Weighted Shortest Job First (Cost of Delay ÷ Effort)</strong>.</li>
+              <li>Flags stale assumptions (&gt;30 days) when corporate RAG baselines change.</li>
+              <li>Exports harmonized, human-verified dossiers directly into the sponsor’s <code>.xlsx</code> workbook.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 2 -->
+      <section class="section-card" id="industry-problem">
+        <div class="section-header">
+          <span class="section-num">02</span>
+          <h2>Industry Problem &amp; Quantified Bottleneck</h2>
+        </div>
+        <p>
+          Empirical industry benchmarks highlight a severe conversion gap between bottom-up GenAI ideation and realized P&amp;L impact. According to <strong>MIT NANDA (<em>State of AI in Business 2025</em>)</strong>, only <strong>5%</strong> of enterprise GenAI projects generate measurable financial value. Similarly, <strong>Johnson &amp; Johnson’s</strong> enterprise transformation revealed that out of <strong>900 GenAI projects</strong> routed to a central governance board during its early <em>“thousand flowers bloom”</em> phase, just <strong>10%–15% (90–135 initiatives)</strong> generated <strong>80%</strong> of the targeted <strong>$500M</strong> three-year value.
+        </p>
+
+        <div class="stat-grid">
+          <div class="stat-card">
+            <div class="stat-value rose">5%</div>
+            <div class="stat-label">Enterprise GenAI pilots delivering measurable value (MIT NANDA 2025)</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value blue">900 → 12%</div>
+            <div class="stat-label">J&amp;J backlog funnel: top 10–15% of cases drove 80% of $500M value</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value amber">3,150 hrs</div>
+            <div class="stat-label">Manual Gate-1 triage effort at 3.5 hrs/case (~1.75 FTE-years)</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value rose">$18.0M</div>
+            <div class="stat-label">Value deferred by a 3-month Gate-1 queue ($2.7M–$3.6M permanently lost)</div>
+          </div>
+        </div>
+
+        <h3>Four Failure Modes of Manual Gate-1 Evaluation</h3>
+        <div class="failure-grid">
+          <div class="failure-card">
+            <div class="failure-card-title">1. Central Triage Effort Bottleneck</div>
+            <p>
+              Reviewing uneven submissions, chasing sponsors for baseline KPIs, and checking cross-unit overlaps at <strong>3.5 hours/proposal</strong> across 900 cases consumes <strong>3,150 hours (~1.75 FTE-years)</strong>—with <strong>85%–90% (2,680–2,835 hrs)</strong> spent screening out redundant or low-ROI ideas before a single project reaches production.
+            </p>
+          </div>
+          <div class="failure-card">
+            <div class="failure-card-title">2. Queue Latency &amp; Cost of Delay (CoD)</div>
+            <p>
+              Proposals spend 80%–90% of pre-approval time sitting idle in queues (<strong>6–12 weeks</strong> to <strong>3–6 months</strong>). Across 100 top initiatives (conservatively valued at <strong>$60k/month</strong> each), a 3-month Gate-1 delay defers <strong>$18.0M</strong> in value—and permanently destroys <strong>$2.7M–$3.6M</strong> where 15%–20% of windows are time-perishable.
+            </p>
+          </div>
+          <div class="failure-card">
+            <div class="failure-card-title">3. Assumption &amp; Context Decay</div>
+            <p>
+              When proposals sit unreviewed for months, baseline volumes, vendor capabilities, and internal IT architectures shift. Opening stale dossiers triggers a <strong>30%–50% “re-qualification tax”</strong> on both reviewers and business teams just to re-validate outdated numbers.
+            </p>
+          </div>
+          <div class="failure-card">
+            <div class="failure-card-title">4. Sponsor &amp; Champion Attrition</div>
+            <p>
+              Large enterprises experience <strong>12%–18% annual internal mobility</strong> (~1.0%–1.5%/month). A 4-to-6-month Gate-1 backlog leaves <strong>5%–9% of proposals</strong> without their original business sponsor or domain lead, turning viable ideas into orphaned backlog entries.
+            </p>
+          </div>
+        </div>
+
+        <p style="margin-top:1.1rem;">
+          <strong>Why Case Studio Matters:</strong> J&amp;J resolved its central bottleneck by training <strong>47,000+</strong> employees and embedding <strong>6,000 internal forward-deployed “AI Specialists”</strong> into business functions. Most enterprises cannot afford thousands of embedded specialists. <strong>Case Studio</strong> automates that front-end qualification role at Gate 1—compressing cycle time from months to under 48 hours while enforcing CFO-grade rigor.
+        </p>
+      </section>
+
+      <!-- SECTION 3 -->
+      <section class="section-card" id="architecture">
+        <div class="section-header">
+          <span class="section-num">03</span>
+          <h2>System Architecture &amp; Agentic Workflow</h2>
+        </div>
+        <p>
+          Aligned with the ETH Agentic Systems Lab curriculum (<em>Context Engineering &amp; RAG</em>, <em>Structured Outputs</em>, <em>Human-in-the-Loop Governance</em>, and <em>Evals</em>), Case Studio orchestrates a deterministic multi-stage state machine wrapped in a lightweight dual-view web interface.
+        </p>
+
+        <!-- End-to-End SVG Pipeline -->
+        <div class="diagram-wrap">
+          <svg viewBox="0 0 920 190" width="100%" height="auto" role="img" aria-label="Case Studio 4-Stage Agentic Pipeline">
+            <defs>
+              <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1 L 10 5 L 0 9 z" fill="#64748b" />
+              </marker>
+            </defs>
+
+            <!-- Stage 1 -->
+            <rect x="10" y="20" width="200" height="145" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" />
+            <rect x="10" y="20" width="200" height="30" rx="10" fill="#eff6ff" />
+            <text x="24" y="40" font-size="11" font-weight="700" fill="#1d4ed8">STAGE 1 · SILENT RAG</text>
+            <text x="24" y="68" font-size="12" font-weight="700" fill="#0f172a">Context Grounding</text>
+            <text x="24" y="88" font-size="10.5" fill="#475569">• Ingest raw pitch / deck</text>
+            <text x="24" y="105" font-size="10.5" fill="#475569">• Query strategy &amp; profit pools</text>
+            <text x="24" y="122" font-size="10.5" fill="#475569">• Auto-fill known IT/data facts</text>
+            <text x="24" y="146" font-size="10" font-weight="600" fill="#047857">Output: Cited Pre-Fill</text>
+
+            <line x1="210" y1="92" x2="238" y2="92" stroke="#64748b" stroke-width="1.8" marker-end="url(#arrow)" />
+
+            <!-- Stage 2 -->
+            <rect x="242" y="20" width="210" height="145" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" />
+            <rect x="242" y="20" width="210" height="30" rx="10" fill="#eff6ff" />
+            <text x="256" y="40" font-size="11" font-weight="700" fill="#1d4ed8">STAGE 2 · CASE SUBMITTER</text>
+            <text x="256" y="68" font-size="12" font-weight="700" fill="#0f172a">Financial &amp; KPI Coaching</text>
+            <text x="256" y="88" font-size="10.5" fill="#475569">• 2–3 targeted Qs per turn</text>
+            <text x="256" y="105" font-size="10.5" fill="#475569">• Hard vs. Soft FTE + ramp-up</text>
+            <text x="256" y="122" font-size="10.5" fill="#475569">• MVP/Pilot/Prod/Ops + CoD</text>
+            <text x="256" y="146" font-size="10" font-weight="600" fill="#b45309">Output: Provenance Schema</text>
+
+            <line x1="452" y1="92" x2="480" y2="92" stroke="#64748b" stroke-width="1.8" marker-end="url(#arrow)" />
+
+            <!-- Stage 3 -->
+            <rect x="484" y="20" width="210" height="145" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" />
+            <rect x="484" y="20" width="210" height="30" rx="10" fill="#f5f3ff" />
+            <text x="498" y="40" font-size="11" font-weight="700" fill="#5b21b6">STAGE 3 · CASE MANAGER</text>
+            <text x="498" y="68" font-size="12" font-weight="700" fill="#0f172a">Semantic Deduplication</text>
+            <text x="498" y="88" font-size="10.5" fill="#475569">• Hybrid retrieval + LLM judge</text>
+            <text x="498" y="105" font-size="10.5" fill="#475569">• Duplicate vs. Shared Asset</text>
+            <text x="498" y="122" font-size="10.5" fill="#475569">• WSJF Cost-of-Delay ranking</text>
+            <text x="498" y="146" font-size="10" font-weight="600" fill="#5b21b6">Output: Clustered Portfolio</text>
+
+            <line x1="694" y1="92" x2="722" y2="92" stroke="#64748b" stroke-width="1.8" marker-end="url(#arrow)" />
+
+            <!-- Stage 4 -->
+            <rect x="726" y="20" width="184" height="145" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" />
+            <rect x="726" y="20" width="184" height="30" rx="10" fill="#ecfdf5" />
+            <text x="740" y="40" font-size="11" font-weight="700" fill="#065f46">STAGE 4 · GATE-1 REVIEW</text>
+            <text x="740" y="68" font-size="12" font-weight="700" fill="#0f172a">HITL &amp; Excel Bridge</text>
+            <text x="740" y="88" font-size="10.5" fill="#475569">• AI team confirms clusters</text>
+            <text x="740" y="105" font-size="10.5" fill="#475569">• Unresolved gaps highlighted</text>
+            <text x="740" y="122" font-size="10.5" fill="#475569">• Export to sponsor .xlsx</text>
+            <text x="740" y="146" font-size="10" font-weight="600" fill="#065f46">Output: Gate-1 Decision</text>
+          </svg>
+        </div>
+
+        <!-- Interactive Architecture Tabs -->
+        <div class="tabs" role="tablist">
+          <button class="tab-btn active" data-tab="tab-submitter">Case Submitter Engine</button>
+          <button class="tab-btn" data-tab="tab-manager">Case Manager Engine</button>
+          <button class="tab-btn" data-tab="tab-sample">Live Sample Qualification Card</button>
+          <button class="tab-btn" data-tab="tab-schema">Pydantic Data Schema</button>
+        </div>
+
+        <!-- Tab 1: Case Submitter -->
+        <div class="tab-panel active" id="tab-submitter">
+          <p>
+            <strong>Case Submitter</strong> replaces static intake forms with a targeted conversational loop that minimizes business-team friction while enforcing financial discipline:
+          </p>
+          <ul style="margin-left:1.25rem; color:var(--text-secondary); font-size:0.93rem;">
+            <li style="margin-bottom:0.5rem;"><strong>Silent Corporate RAG Grounding:</strong> Before asking a single question, the agent queries static corporate documents (org structure, gross profit pools such as <em>StandaPump 55% / Services 30% / CustoPump 15%</em>, strategic priorities, and IT catalogs) to pre-fill domain alignment with exact document citations.</li>
+            <li style="margin-bottom:0.5rem;"><strong>SMART KPI &amp; Benefit Realization Coaching:</strong> Rejects vague claims (e.g., <em>“improves technician efficiency”</em>) and prompts the sponsor to quantify SMART metrics while distinguishing <strong>Soft Savings</strong> (reinvested FTE capacity with a phased ramp-up curve) from <strong>Hard Savings</strong> (headcount attrition/hiring cuts or direct OPEX reduction).</li>
+            <li style="margin-bottom:0.5rem;"><strong>Lifecycle Cost Completeness:</strong> Verifies separation between one-off build phases (<strong>MVP</strong>, <strong>Pilot</strong>, <strong>Productization</strong>) and recurring <strong>Operations &amp; Token</strong> run-rate expenses—flagging omitted run-rate estimates explicitly as <code>Agent Inferred</code> or <code>Missing</code>.</li>
+            <li style="margin-bottom:0.5rem;"><strong>Window Sensitivity &amp; Cost of Delay Probe:</strong> Captures monthly run-rate value and classifies opportunities as <em>Linear Value</em> vs. <em>Time-Perishable Value</em> (with an explicit value-expiration date) so urgent cases never languish in FIFO queues.</li>
+            <li><strong>Pluggable AI Domain Extension:</strong> Dynamically activates data-readiness, shared-capability, and compliance/risk probes whenever a submission involves AI/ML or agentic workflows.</li>
+          </ul>
+        </div>
+
+        <!-- Tab 2: Case Manager -->
+        <div class="tab-panel" id="tab-manager">
+          <p>
+            <strong>Case Manager</strong> gives the central AI / portfolio team a harmonized, deduplicated view across all incoming proposals while preserving human decision authority:
+          </p>
+          <ul style="margin-left:1.25rem; color:var(--text-secondary); font-size:0.93rem;">
+            <li style="margin-bottom:0.5rem;"><strong>Two-Stage Semantic Deduplication:</strong> First retrieves candidate neighbors using hybrid dense + keyword embeddings across <em>problem statement</em>, <em>affected workflow</em>, and <em>expected benefit</em>; then runs a structured LLM reasoning pass classifying pairs as <strong>True Duplicate</strong>, <strong>Shared Capability / Overlapping Benefit</strong> (e.g., Sales and Service independently pitching assistants over the same product manuals), or <strong>Distinct</strong>—preserving links to original submitters and sponsors.</li>
+            <li style="margin-bottom:0.5rem;"><strong>Cost-of-Delay (WSJF) Queue Ranking:</strong> Ranks Gate-1 review order by <code>Monthly Cost of Delay ÷ Estimated Effort</code> rather than submission timestamp, ensuring time-sensitive opportunities are triaged first.</li>
+            <li style="margin-bottom:0.5rem;"><strong>Staleness &amp; RAG-Drift Detection:</strong> Stamps every field with a <code>verified_at</code> timestamp and flags proposals sitting unreviewed past 30 days or impacted by updates to corporate strategy/IT RAG documents.</li>
+            <li><strong>Human-in-the-Loop Governance &amp; Excel Bridge:</strong> Reviewers confirm, split, or merge proposed clusters, inspect unresolved questions side-by-side, and export the standardized portfolio directly into the sponsor’s <code>.xlsx</code> Gate-1 workbook via <code>openpyxl</code>.</li>
+          </ul>
+        </div>
+
+        <!-- Tab 3: Sample Qualification Card -->
+        <div class="tab-panel" id="tab-sample">
+          <p style="font-size:0.88rem; margin-bottom:0.85rem;">
+            Illustrative Gate-1 output generated by <strong>Case Studio</strong> (modeled on the DataPump AG industrial benchmark), demonstrating strict provenance separation and cross-silo overlap detection:
+          </p>
+          <div style="border:1px solid var(--border-medium); border-radius:10px; padding:1.2rem; background:#f8fafc;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.5rem; margin-bottom:0.85rem; padding-bottom:0.75rem; border-bottom:1px solid var(--border-light);">
+              <div>
+                <span style="font-size:0.74rem; font-weight:700; color:#1d4ed8; text-transform:uppercase;">CASE-004 · CustoPump Maintenance Services</span>
+                <h4 style="font-size:1.05rem; color:#0f172a; margin-top:0.15rem;">AI Troubleshooting Assistant for Field &amp; Hotline Technicians</h4>
+              </div>
+              <div style="display:flex; gap:0.4rem; flex-wrap:wrap;">
+                <span class="badge badge-inferred">Shared Capability: CASE-007 (Sales Spec Bot)</span>
+                <span class="badge badge-fact">Wave 2 · Decision Enrichment</span>
+              </div>
+            </div>
+
+            <div class="table-wrap" style="margin:0;">
+              <table>
+                <thead>
+                  <tr>
+                    <th style="width:24%;">Gate-1 Field</th>
+                    <th style="width:48%;">Qualified Value</th>
+                    <th style="width:28%;">Provenance &amp; Citation</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>Profit Pool &amp; Strategy</strong></td>
+                    <td>Pump Maintenance Services (<strong>30% of DataPump AG gross profit</strong>); aligns with 2026 Service Margin Expansion OKR.</td>
+                    <td><span class="badge badge-fact">Verified Fact</span><br><small>Corporate RAG · DataPump Overview p.4</small></td>
+                  </tr>
+                  <tr>
+                    <td><strong>SMART KPIs</strong></td>
+                    <td>-30% Average Handle Time per ticket; +7% (senior) / +18% (junior) First Call Resolution; +10 pts CSAT.</td>
+                    <td><span class="badge badge-estimate">Submitter Estimate</span><br><small>Chat Turn 1 · Head of Service</small></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Benefit Realization</strong></td>
+                    <td><strong>Soft Savings:</strong> 0.75 FTE freed (€75k/yr equivalent) reinvested into billable preventive maintenance; 4-quarter ramp-up (25% → 100%).</td>
+                    <td><span class="badge badge-estimate">Submitter Estimate</span><br><small>Chat Turn 2 · Scenario 1 Confirmed</small></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Lifecycle Costs</strong></td>
+                    <td>Build/MVP: €20k (6 wks) · Pilot: €25k (3 mos) · Productization: €60k · Ongoing Ops/Tokens: €70k/yr (€17.5k/qtr).</td>
+                    <td><span class="badge badge-fact">Verified Fact</span> / <span class="badge badge-inferred">Ops Inferred</span><br><small>Chat Turn 2 + Standard Token Benchmark</small></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Window Sensitivity</strong></td>
+                    <td><strong>Linear Value</strong> (€6.25k/mo steady-state); no hard external expiration date.</td>
+                    <td><span class="badge badge-estimate">Submitter Estimate</span><br><small>Chat Turn 3 · verified_at: 2026-11-16</small></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Cross-Silo Overlap</strong></td>
+                    <td>Shares underlying PDF manual ingestion &amp; retrieval pipeline with <strong>CASE-007 (Sales Bid/RFP Spec Assistant)</strong>. Recommend joint knowledge-base architecture.</td>
+                    <td><span class="badge badge-inferred">Agent Inferred</span><br><small>Cluster Engine · Cosine 0.84 + LLM Judge</small></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Open Gate-1 Gap</strong></td>
+                    <td>Confirm whether legacy ERP service logs (#4581+) require PII redaction prior to pilot indexing.</td>
+                    <td><span class="badge badge-missing">Missing</span><br><small>Flagged for IT Security / Gate-1 Review</small></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 4: Pydantic Schema -->
+        <div class="tab-panel" id="tab-schema">
+          <p style="font-size:0.88rem; margin-bottom:0.75rem;">
+            Every Gate-1 field is typed as a structured <code>QualifiedField</code> object so LLM inferences and submitter estimates can never masquerade as verified facts during Excel export:
+          </p>
+          <div class="code-header">
+            <span>models/case_record.py</span>
+            <button class="btn-copy" onclick="copySchema()">Copy Schema</button>
+          </div>
+          <pre id="schema-code">from datetime import datetime
+from typing import Literal, Optional, List
+from pydantic import BaseModel, Field
+
+ProvenanceStatus = Literal[
+    "verified_fact",      # Backed by uploaded doc or static company RAG
+    "submitter_estimate", # Stated by business team without hard evidence
+    "agent_inferred",     # Extrapolated by agent (e.g., missing Ops run-rate)
+    "missing"             # Unresolved gap flagged for Gate-1 review
+]
+
+class QualifiedField(BaseModel):
+    value: Optional[str] = None
+    status: ProvenanceStatus = "missing"
+    source_citation: Optional[str] = None
+    open_question: Optional[str] = None
+    verified_at: Optional[datetime] = None
+
+class LifecycleFinancials(BaseModel):
+    build_and_pilot_cost: QualifiedField
+    productization_cost: QualifiedField
+    annual_ops_run_rate: QualifiedField
+    hard_savings_eur: QualifiedField       # Headcount / direct OPEX reduction
+    soft_savings_fte: QualifiedField       # Reinvested capacity + ramp-up curve
+    monthly_cost_of_delay: QualifiedField
+    window_sensitivity: Literal["linear", "time_perishable", "unknown"] = "unknown"
+    value_expiration_date: Optional[str] = None
+    smart_kpis: List[QualifiedField]
+
+class AIDomainExtension(BaseModel):
+    # Activated dynamically when proposal involves AI/ML/Agentic systems
+    data_sources_and_readiness: QualifiedField
+    shared_capability_tags: List[str]
+    key_risks_and_dependencies: QualifiedField
+
+class CaseRecord(BaseModel):
+    case_id: str
+    title: str
+    domain_unit: QualifiedField
+    sponsor_and_team: QualifiedField
+    strategic_objective: QualifiedField
+    problem_and_workflow: QualifiedField
+    proposed_solution: QualifiedField
+    financials: LifecycleFinancials
+    ai_extension: Optional[AIDomainExtension] = None
+    cluster_relation: Literal["distinct", "shared_dependency", "duplicate"] = "distinct"
+    related_case_ids: List[str] = Field(default_factory=list)
+    cluster_rationale: Optional[str] = None</pre>
+        </div>
+      </section>
+
+      <!-- SECTION 4 -->
+      <section class="section-card" id="kpis-business-case">
+        <div class="section-header">
+          <span class="section-num">04</span>
+          <h2>SMART KPIs &amp; Dual-Level Business Case</h2>
+        </div>
+        <p>
+          In accordance with the ETH grading rubric (<em>Good Business Case &gt; Good Tech Solution</em>), Case Studio is evaluated across two tiers: immediate PoC performance on the 8-case sponsor benchmark and enterprise-scale ROI modeled on Johnson &amp; Johnson’s transformation parameters.
+        </p>
+
+        <h3>4.A · PoC Evaluation KPIs (December 16 Deliverable · 8 Test Proposals)</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>SMART KPI</th>
+                <th>Manual Baseline</th>
+                <th>Case Studio Target</th>
+                <th>Measurement Protocol</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Gate-1 Field Completeness</strong></td>
+                <td>&lt; 40% populated on raw intake</td>
+                <td><strong>&ge; 90%</strong> populated or explicitly flagged</td>
+                <td>Before vs. after field audit across 8 test cases (2–3 chat turns)</td>
+              </tr>
+              <tr>
+                <td><strong>Provenance Integrity</strong></td>
+                <td>Unstructured free text; mixed facts/guesses</td>
+                <td><strong>100%</strong> tagged; <strong>0</strong> unflagged hallucinations</td>
+                <td>Automated schema validation + manual audit against RAG sources</td>
+              </tr>
+              <tr>
+                <td><strong>Deduplication &amp; Overlap Precision</strong></td>
+                <td>Ad-hoc spreadsheet scanning</td>
+                <td><strong>&ge; 85%</strong> precision / recall</td>
+                <td>Confusion matrix against sponsor ground-truth clusters</td>
+              </tr>
+              <tr>
+                <td><strong>Central Triage Effort</strong></td>
+                <td>~3.5 hrs / proposal</td>
+                <td><strong>&le; 1.5 hrs / proposal (&ge; 57% cut)</strong></td>
+                <td>Timed role-play walkthrough of 2 enriched proposals vs. manual review</td>
+              </tr>
+              <tr>
+                <td><strong>Gate-1 End-to-End Cycle Time</strong></td>
+                <td>6–12 weeks (queue + email loops)</td>
+                <td><strong>&le; 48 hours</strong> to decision-ready dossier</td>
+                <td>End-to-end timestamp delta from raw pitch upload to Excel export</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>4.B · Interactive Enterprise Business Case Simulator (J&amp;J Scale)</h3>
+        <p>
+          Adjust the annual proposal intake volume below to model how Case Studio’s four value levers scale—explicitly separating <strong>Soft Capacity Savings</strong>, <strong>Accelerated / Preserved Value (Cost of Delay)</strong>, and <strong>Hard Capital Avoidance</strong>:
+        </p>
+
+        <div class="simulator-box">
+          <div class="sim-controls">
+            <div class="sim-slider-group">
+              <label for="case-slider">
+                <span>Annual Proposal Backlog Volume</span>
+                <span id="case-count-label" style="color:#1d4ed8;">900 Proposals (J&amp;J Benchmark)</span>
+              </label>
+              <input type="range" id="case-slider" min="100" max="1200" step="50" value="900" />
+            </div>
+            <div class="sim-presets">
+              <button class="preset-btn" onclick="setScale(150)">Mid-Size Firm (150)</button>
+              <button class="preset-btn" onclick="setScale(450)">Large Enterprise (450)</button>
+              <button class="preset-btn active" onclick="setScale(900)">J&amp;J Scale (900)</button>
+            </div>
+          </div>
+
+          <div class="table-wrap" style="margin:0; background:#fff;">
+            <table>
+              <thead>
+                <tr>
+                  <th>Value Lever</th>
+                  <th>Benefit Category</th>
+                  <th>Model Assumption</th>
+                  <th>Annualized Impact</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>1. Workforce &amp; Specialist Training Cut (50%)</strong><br><small>Just-in-time coaching replaces “use-once” training</small></td>
+                  <td><span class="badge badge-estimate">Soft Savings</span></td>
+                  <td id="sim-train-desc">47,000 staff × 8h + 6,000 specialists × 40h cut by 50% (308,000 hrs)</td>
+                  <td><strong id="sim-train-val" style="color:#0f172a;">$20.88M</strong><br><small id="sim-train-fte">171.1 FTE-years freed</small></td>
+                </tr>
+                <tr>
+                  <td><strong>2. Central Gate-1 Triage Reduction</strong><br><small>3.5 hrs → 1.25 hrs per proposal (-64%)</small></td>
+                  <td><span class="badge badge-estimate">Soft Savings</span></td>
+                  <td id="sim-triage-desc">900 cases × 2.25 hrs saved @ $110/hr senior architect rate</td>
+                  <td><strong id="sim-triage-val" style="color:#0f172a;">$222.8k</strong><br><small id="sim-triage-fte">2,025 hrs (1.13 FTE-yrs)</small></td>
+                </tr>
+                <tr>
+                  <td><strong>3. Cost of Delay Avoided (&lt;48h vs. 3-Mo Queue)</strong><br><small>Top 11% winning cases @ $60k/mo conservative value</small></td>
+                  <td><span class="badge badge-inferred">Accelerated / Preserved</span></td>
+                  <td id="sim-cod-desc">100 top cases × 3 mos accelerated; 15% perishable window preserved</td>
+                  <td><strong id="sim-cod-val" style="color:#5b21b6;">$18.00M accelerated</strong><br><small id="sim-cod-lost">$2.70M perishable value saved</small></td>
+                </tr>
+                <tr>
+                  <td><strong>4. Duplicate PoC Avoidance (5% Rate)</strong><br><small>Stops redundant MVP + Pilot funding ($50k/PoC)</small></td>
+                  <td><span class="badge badge-fact">Hard Capital Savings</span></td>
+                  <td id="sim-dup-desc">45 redundant pilots blocked before capital allocation</td>
+                  <td><strong id="sim-dup-val" style="color:#047857;">$2.25M</strong><br><small>Direct OPEX / token avoidance</small></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 5 -->
+      <section class="section-card" id="roadmap">
+        <div class="section-header">
+          <span class="section-num">05</span>
+          <h2>4-Week Execution Roadmap (Toward Dec 16, 2026)</h2>
+        </div>
+        <p>
+          With weekly Wednesday check-ins at ETH Zürich and the final presentation on <strong>December 16, 2026</strong>, development is structured into four gated weekly sprints:
+        </p>
+
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-date">Nov 18, 2026<span>Check-in 1 · Kickoff</span></div>
+            <div class="timeline-body">
+              <strong>Lock Scope, Excel Template &amp; Corporate RAG Corpus</strong>
+              <p>Confirm team registration on Moodle; receive Jérôme’s 8 anonymized proposals and Gate-1 <code>.xlsx</code> template; validate baseline triage assumptions and synthetic corporate context packet.</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-date">Nov 25, 2026<span>Check-in 2 · Core Engine</span></div>
+            <div class="timeline-body">
+              <strong>Build Provenance Schema, RAG Pre-Fill &amp; Submitter Agent</strong>
+              <p>Implement Pydantic <code>CaseRecord</code> state, hybrid RAG grounding over company docs, and the 2–3 question financial/KPI coaching loop enforcing Hard/Soft savings and Cost of Delay.</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-date">Dec 02, 2026<span>Check-in 3 · Portfolio &amp; UI</span></div>
+            <div class="timeline-body">
+              <strong>Two-Stage Deduplication, Dual-Role UI &amp; Excel Export</strong>
+              <p>Complete semantic clustering (Duplicate vs. Shared Capability), build the thin two-tab web UI (Case Submitter + Case Manager), and bind <code>openpyxl</code> export to Jérôme’s workbook.</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-date">Dec 09, 2026<span>Check-in 4 · Evals &amp; Demo</span></div>
+            <div class="timeline-body">
+              <strong>Run 8-Case Quantitative Eval &amp; Record Video Pitch</strong>
+              <p>Benchmark deduplication precision, field completeness, and review time saved across all 8 proposals; role-play 2 end-to-end enrichments; produce the final presentation video.</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-date">Dec 16, 2026<span>Final Presentation</span></div>
+            <div class="timeline-body">
+              <strong>Submit Prototype Package &amp; Deliver Live Presentation</strong>
+              <p>Deliver working prototype repository, editable Gate-1 Excel workbook, test materials, setup guide, and video presentation at ETH Zürich.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <footer>
+    <div><strong>Case Studio</strong> · ETH Zürich Agentic Systems Lab (Fall 2026) · In collaboration with LastingImpact.AI GmbH</div>
+    <div>Prepared for team alignment &amp; sponsor kickoff · November 2026</div>
+  </footer>
+
+  <script>
+    // Active TOC highlight on scroll
+    const sections = document.querySelectorAll("section[id]");
+    const navLinks = document.querySelectorAll("#toc a");
+
+    window.addEventListener("scroll", () => {
+      let current = "";
+      sections.forEach((section) => {
+        const sectionTop = section.offsetTop - 120;
+        if (window.scrollY >= sectionTop) {
+          current = section.getAttribute("id");
+        }
+      });
+      navLinks.forEach((link) => {
+        link.classList.remove("active");
+        if (link.getAttribute("href") === "#" + current) {
+          link.classList.add("active");
+        }
+      });
+    });
+
+    // Interactive Architecture Tabs
+    const tabBtns = document.querySelectorAll(".tab-btn");
+    const tabPanels = document.querySelectorAll(".tab-panel");
+
+    tabBtns.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        tabBtns.forEach((b) => b.classList.remove("active"));
+        tabPanels.forEach((p) => p.classList.remove("active"));
+        btn.classList.add("active");
+        document.getElementById(btn.dataset.tab).classList.add("active");
+      });
+    });
+
+    // Copy Pydantic Schema
+    function copySchema() {
+      const code = document.getElementById("schema-code").innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        const btn = document.querySelector(".btn-copy");
+        btn.innerText = "Copied!";
+        setTimeout(() => (btn.innerText = "Copy Schema"), 1800);
+      });
+    }
+
+    // Enterprise Business Case Scale Simulator
+    const slider = document.getElementById("case-slider");
+    const presetBtns = document.querySelectorAll(".preset-btn");
+
+    function formatCurrency(val) {
+      if (val >= 1_000_000) {
+        return "$" + (val / 1_000_000).toFixed(2) + "M";
+      }
+      return "$" + (val / 1_000).toFixed(1) + "k";
+    }
+
+    function updateSimulator(cases) {
+      const ratio = cases / 900;
+
+      // Label
+      let tag = "";
+      if (cases === 900) tag = " (J&J Benchmark)";
+      else if (cases <= 200) tag = " (Mid-Size Enterprise)";
+      else tag = " (Scaled Enterprise)";
+      document.getElementById("case-count-label").innerText = `${cases} Proposals${tag}`;
+
+      // 1. Training Savings (scales proportionally with workforce & specialist cohort)
+      const staffCount = Math.round(47000 * ratio);
+      const specCount = Math.round(6000 * ratio);
+      const trainHoursSaved = Math.round((staffCount * 8 + specCount * 40) * 0.5);
+      const trainValue = (staffCount * 8 * 0.5 * 60) + (specCount * 40 * 0.5 * 80);
+      const trainFte = (trainHoursSaved / 1800).toFixed(1);
+
+      document.getElementById("sim-train-desc").innerText =
+        `${staffCount.toLocaleString()} staff × 8h + ${specCount.toLocaleString()} specialists × 40h cut by 50% (${trainHoursSaved.toLocaleString()} hrs)`;
+      document.getElementById("sim-train-val").innerText = formatCurrency(trainValue);
+      document.getElementById("sim-train-fte").innerText = `${trainFte} FTE-years freed`;
+
+      // 2. Central Triage Savings
+      const triageHours = Math.round(cases * 2.25);
+      const triageValue = triageHours * 110;
+      const triageFte = (triageHours / 1800).toFixed(2);
+
+      document.getElementById("sim-triage-desc").innerText =
+        `${cases} cases × 2.25 hrs saved @ $110/hr senior architect rate`;
+      document.getElementById("sim-triage-val").innerText = formatCurrency(triageValue);
+      document.getElementById("sim-triage-fte").innerText = `${triageHours.toLocaleString()} hrs (${triageFte} FTE-yrs)`;
+
+      // 3. Cost of Delay Avoided (top ~11.1% winning cases, $60k/mo conservative, 3-mo queue)
+      const topCases = Math.max(1, Math.round(cases * (100 / 900)));
+      const codAccelerated = topCases * 60000 * 3;
+      const codPerishable = codAccelerated * 0.15;
+
+      document.getElementById("sim-cod-desc").innerText =
+        `${topCases} top cases × 3 mos accelerated; 15% perishable window preserved`;
+      document.getElementById("sim-cod-val").innerText = `${formatCurrency(codAccelerated)} accelerated`;
+      document.getElementById("sim-cod-lost").innerText = `${formatCurrency(codPerishable)} perishable value saved`;
+
+      // 4. Duplicate PoC Avoidance (5% rate @ $50k MVP+Pilot)
+      const dupCases = Math.max(1, Math.round(cases * 0.05));
+      const dupValue = dupCases * 50000;
+
+      document.getElementById("sim-dup-desc").innerText =
+        `${dupCases} redundant pilots blocked before capital allocation`;
+      document.getElementById("sim-dup-val").innerText = formatCurrency(dupValue);
+
+      // Update preset button active state
+      presetBtns.forEach((btn) => {
+        btn.classList.toggle("active", btn.innerText.includes(`(${cases})`));
+      });
+    }
+
+    function setScale(val) {
+      slider.value = val;
+      updateSimulator(val);
+    }
+
+    slider.addEventListener("input", (e) => {
+      updateSimulator(parseInt(e.target.value, 10));
+    });
+  </script>
+</body>
+</html>
